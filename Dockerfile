@@ -2,12 +2,27 @@ FROM phusion/baseimage
 LABEL maintainer="meganetaaan"
 
 # Base setup
-RUN apt-get update && \
-  apt-get -y install sudo && \
-  apt-get -y install build-essential && \
-  apt-get -y install git && \
-  apt-get -y install libgtk-3-dev && \
-  apt-get clean
+RUN apt-get update && apt-get install -y \
+  sudo \
+  build-essential \
+  git \
+  libgtk-3-dev \
+  gcc \
+  git \
+  wget \
+  make \
+  libncurses-dev \
+  flex \
+  bison \
+  gperf \
+  python \
+  python-pip \
+  python-setuptools \
+  python-serial \
+  cmake \
+  ninja-build \
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
 
 ENV HOME=/root
 ENV MODDABLE=$HOME/Projects/moddable
@@ -23,8 +38,8 @@ RUN make install
 ENV PATH=$PATH:$MODDABLE/build/bin/lin/release
 
 # ESP32 Environments
-RUN apt-get -y install gcc git wget make libncurses-dev flex bison gperf python python-pip python-setuptools python-serial cmake ninja-build
 
+RUN git config --global http.postBuffer 524288000
 WORKDIR $HOME/esp32
 RUN git clone -b v3.3.2 --recursive https://github.com/espressif/esp-idf.git
 ENV IDF_PATH=$HOME/esp32/esp-idf
@@ -41,10 +56,6 @@ ENV PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
 # ENV UPLOAD_PORT=/dev/ttyUSB0
 
 # add workspace for mounting
-RUN mkdir /workspace
-# ADD ./ /workspace
-# WORKDIR /workspace
-
+WORKDIR /workspace
 RUN mkdir -p $HOME/.config
-
 CMD ["/bin/bash"]
