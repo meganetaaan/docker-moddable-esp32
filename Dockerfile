@@ -55,6 +55,10 @@ ENV PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
 # If upload port is not detected, Set UPLOAD_PORT.
 # ENV UPLOAD_PORT=/dev/ttyUSB0
 
+# Apply patch for i2s bug (https://github.com/Moddable-OpenSource/moddable/issues/388)
+ADD i2s.c.patch .
+RUN patch esp-idf/components/driver/i2s.c < i2s.c.patch
+
 # add workspace for mounting
 WORKDIR /workspace
 RUN mkdir -p $HOME/.config
