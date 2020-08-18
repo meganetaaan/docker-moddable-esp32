@@ -1,4 +1,0 @@
-945c945
-<         I2S[i2s_num]->conf.tx_msb_right = 1;
----
->         I2S[i2s_num]->conf.tx_msb_right = 0;
