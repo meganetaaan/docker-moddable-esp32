@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 
-get_githash
 if [ -d moddable ]; then
     pushd moddable && git pull && popd
 else
