@@ -17,6 +17,7 @@ pushd moddable
 HASH=`git rev-parse --short HEAD`
 popd
 docker build -t tiryoh/moddable-esp32:moddable-${HASH} .
+docker tag tiryoh/moddable-esp32:moddable-${HASH} ghcr.io/tiryoh/moddable-esp32:moddable-${HASH}
 
 if [ -z "${IS_LATEST}" ] && [ -z "${WILL_PUSH_IMAGE}" ]; then  # if not defined
 	read -p "Is this image '*:latest'?(y/N): " yn
@@ -30,7 +31,7 @@ if [ -z "${IS_LATEST}" ]; then  # if still not defined
 fi
 
 if [ -z "${IS_LATEST}" ] && [ -z "${WILL_PUSH_IMAGE}" ]; then  # if not defined
-	read -p "Push to hub.docker.com?(y/N): " yn
+	read -p "Push to hub.docker.com and ghcr.io?(y/N): " yn
 	case "$yn" in
 		[yY]*) WILL_PUSH_IMAGE="True";;
 		*) WILL_PUSH_IMAGE="False";;
@@ -40,6 +41,7 @@ fi
 
 if [ "${WILL_PUSH_IMAGE}" == "True" ]; then
 	docker push tiryoh/moddable-esp32:moddable-${HASH}
+	docker push ghcr.io/tiryoh/moddable-esp32:moddable-${HASH}
 	if [ "${IS_LATEST}" == "True" ]; then
 		docker tag tiryoh/moddable-esp32:moddable-${HASH} tiryoh/moddable-esp32:latest
 		docker push tiryoh/moddable-esp32:latest
