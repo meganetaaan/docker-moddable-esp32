@@ -38,8 +38,10 @@ if [ -z "${IS_LATEST}" ] && [ -z "${WILL_PUSH_IMAGE}" ]; then  # if not defined
 
 fi
 
-docker push tiryoh/moddable-esp32:moddable-${HASH}
-if [ "${IS_LATEST}" == "True" ]; then
-	docker tag tiryoh/moddable-esp32:moddable-${HASH} tiryoh/moddable-esp32:latest
-	docker push tiryoh/moddable-esp32:latest
+if [ "${WILL_PUSH_IMAGE}" == "True" ]; then
+	docker push tiryoh/moddable-esp32:moddable-${HASH}
+	if [ "${IS_LATEST}" == "True" ]; then
+		docker tag tiryoh/moddable-esp32:moddable-${HASH} tiryoh/moddable-esp32:latest
+		docker push tiryoh/moddable-esp32:latest
+	fi
 fi
