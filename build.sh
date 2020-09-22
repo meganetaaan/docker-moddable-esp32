@@ -22,28 +22,35 @@ docker tag tiryoh/moddable-esp32:moddable-${HASH} ghcr.io/tiryoh/moddable-esp32:
 if [ -z "${IS_LATEST}" ] && [ -z "${WILL_PUSH_IMAGE}" ]; then  # if not defined
 	read -p "Is this image '*:latest'?(y/N): " yn
 	case "$yn" in
-		[yY]*) IS_LATEST="True";;
-		*) IS_LATEST="False";;
+		[yY]*)
+			IS_LATEST="True"
+		;;
+		*)
+			IS_LATEST="False"
+		;;
 	esac
-fi
-if [ -z "${IS_LATEST}" ]; then  # if still not defined
-	IS_LATEST="False"
-fi
-
-if [ -z "${IS_LATEST}" ] && [ -z "${WILL_PUSH_IMAGE}" ]; then  # if not defined
 	read -p "Push to hub.docker.com and ghcr.io?(y/N): " yn
 	case "$yn" in
-		[yY]*) WILL_PUSH_IMAGE="True";;
-		*) WILL_PUSH_IMAGE="False";;
+		[yY]*)
+			WILL_PUSH_IMAGE="True"
+		;;
+		*)
+			WILL_PUSH_IMAGE="False"
+		;;
 	esac
+fi
 
+if [ -z "${IS_LATEST}" ]; then  # if latest not defined
+	IS_LATEST="False"
+fi
+if [ "${IS_LATEST}" == "True" ]; then
+	docker tag tiryoh/moddable-esp32:moddable-${HASH} tiryoh/moddable-esp32:latest
 fi
 
 if [ "${WILL_PUSH_IMAGE}" == "True" ]; then
 	docker push tiryoh/moddable-esp32:moddable-${HASH}
 	docker push ghcr.io/tiryoh/moddable-esp32:moddable-${HASH}
 	if [ "${IS_LATEST}" == "True" ]; then
-		docker tag tiryoh/moddable-esp32:moddable-${HASH} tiryoh/moddable-esp32:latest
 		docker push tiryoh/moddable-esp32:latest
 	fi
 fi
