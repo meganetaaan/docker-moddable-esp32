@@ -6,6 +6,7 @@ do
 	echo ${OPT}
 	if [ "${OPT}" == "--latest" ]; then IS_LATEST="True"; fi
 	if [ "${OPT}" == "--push" ]; then WILL_PUSH_IMAGE="True"; fi
+	if [ "${OPT}" == "--cache" ]; then WILL_USE_CACHE="True"; fi
 done
 
 if [ -d moddable ]; then
@@ -16,7 +17,12 @@ fi
 pushd moddable
 HASH=`git rev-parse --short HEAD`
 popd
-docker build -t tiryoh/moddable-esp32:moddable-${HASH} .
+
+if [ "${WILL_USE_CACHE}" == "True" ]; then  # if not defined
+	docker build -t tiryoh/moddable-esp32:moddable-${HASH} .
+else
+	docker build --no-cache -t tiryoh/moddable-esp32:moddable-${HASH} .
+fi
 docker tag tiryoh/moddable-esp32:moddable-${HASH} ghcr.io/tiryoh/moddable-esp32:moddable-${HASH}
 
 if [ -z "${IS_LATEST}" ] && [ -z "${WILL_PUSH_IMAGE}" ]; then  # if not defined
