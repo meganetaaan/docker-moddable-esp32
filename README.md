@@ -10,3 +10,4 @@ This Dockerfile is based on [Moddable SDK – Getting Started document](https://
 
 * [__`latest`__](https://hub.docker.com/repository/registry-1.docker.io/tiryoh/moddable-esp32/tags?page=1&name=latest): the latest build of [moddable](https://github.com/Moddable-OpenSource/moddable)
 * [__`moddable-<tag>`__](https://hub.docker.com/repository/registry-1.docker.io/tiryoh/moddable-esp32/tags?page=1&name=moddable-): `<tag>` is the git commit hash of [moddable](https://github.com/Moddable-OpenSource/moddable)
+* [__`<git-tag>`__](https://hub.docker.com/repository/registry-1.docker.io/tiryoh/moddable-esp32/tags?page=1&name=OS): `<git-tag>` is the release name of [moddable](https://github.com/Moddable-OpenSource/moddable)
