@@ -30,7 +30,9 @@ fi
 
 ## build Docker image
 
-if [ ! "${WILL_USE_CACHE}" == "True" ]; then
+if [ "${WILL_USE_CACHE}" == "True" ]; then
+	BUILD_OPTION+=" --cache-from=tiryoh/moddable-esp32"
+else
 	BUILD_OPTION+=" --no-cache"
 fi
 docker build -t tiryoh/moddable-esp32:moddable-${HASH} -f ${DOCKERFILE} ${BUILD_OPTION} .
