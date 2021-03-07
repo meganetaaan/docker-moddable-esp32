@@ -1,4 +1,4 @@
-FROM phusion/baseimage:bionic-1.0.0
+FROM espressif/idf:release-v4.2
 LABEL maintainer="Tiryoh <tiryoh@gmail.com>"
 
 # Base setup
@@ -26,22 +26,12 @@ RUN apt-get update && apt-get install -y \
 
 ENV HOME=/root
 
-# Setup ESP32 Environments
-WORKDIR $HOME/esp32
-ENV IDF_PATH=$HOME/esp32/esp-idf
-RUN git config --global http.postBuffer 524288000
-RUN git clone -b v3.3.2 --depth=1 --recursive https://github.com/espressif/esp-idf.git
-RUN wget https://dl.espressif.com/dl/xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz \
-&& tar -zxvf xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz \
-&& rm xtensa-esp32-elf-linux64-1.22.0-80-g6c4433a-5.2.0.tar.gz
-RUN python -m pip install --user -r $IDF_PATH/requirements.txt
-ENV PATH=$PATH:$HOME/esp32/xtensa-esp32-elf/bin:$IDF_PATH/tools
-
 # Setup Moddable SDK
 ENV MODDABLE=$HOME/Projects/moddable
 WORKDIR $HOME/Projects
 ARG GIT_TAG
-RUN git clone --depth=1 -b $GIT_TAG https://github.com/Moddable-OpenSource/moddable
+RUN git clone --depth=1 -b $GIT_TAG https://github.com/Moddable-OpenSource/moddable && \
+    sed -e "s#TOOLS_ROOT ?= \$(HOME)/.espressif#TOOLS_ROOT ?= \$(IDF_TOOLS_PATH)#g" -i moddable/tools/mcconfig/make.esp32.mk
 
 # Build toolchain for Linux
 WORKDIR $MODDABLE/build/makefiles/lin
