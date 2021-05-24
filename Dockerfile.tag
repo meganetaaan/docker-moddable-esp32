@@ -1,5 +1,5 @@
 FROM espressif/idf:release-v4.2
-LABEL maintainer="Tiryoh <tiryoh@gmail.com>"
+LABEL maintainer="Shinya Ishikawa <ishikawa.s.1027@gmail.com>"
 
 # Base setup
 RUN apt-get update && apt-get install -y \
