@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -e
 
+export $(egrep -v '^#' .env | xargs)
+if test -f .env.local; then
+  export $(egrep -v '^#' .env.local | xargs)
+fi
+
 for OPT in "$@"
 do
 	echo "option(s): "${OPT}
@@ -31,15 +36,17 @@ fi
 ## build Docker image
 
 if [ "${WILL_USE_CACHE}" == "True" ]; then
-	BUILD_OPTION+=" --cache-from=tiryoh/moddable-esp32"
+	BUILD_OPTION+=" --cache-from=${REPOSITORY}"
 else
 	BUILD_OPTION+=" --no-cache"
 fi
-docker build -t tiryoh/moddable-esp32:moddable-${HASH} -f ${DOCKERFILE} ${BUILD_OPTION} .
-docker tag tiryoh/moddable-esp32:moddable-${HASH} ghcr.io/tiryoh/moddable-esp32:moddable-${HASH}
+
+BUILD_OPTION+=" --build-arg MAINTAINER_NAME=${MAINTAINER_NAME} --build-arg MAINTAINER_EMAIL=${MAINTAINER_EMAIL}" 
+docker build -t ${REPOSITORY}:moddable-${HASH} -f ${DOCKERFILE} ${BUILD_OPTION} .
+docker tag ${REPOSITORY}:moddable-${HASH} ghcr.io/${REPOSITORY}:moddable-${HASH}
 if [ ! -z "${LATEST_TAG}" ] ; then  # if published with git tag
-	docker tag tiryoh/moddable-esp32:moddable-${HASH} tiryoh/moddable-esp32:${LATEST_TAG}
-	docker tag tiryoh/moddable-esp32:moddable-${HASH} ghcr.io/tiryoh/moddable-esp32:${LATEST_TAG}
+	docker tag ${REPOSITORY}:moddable-${HASH} ${REPOSITORY}:${LATEST_TAG}
+	docker tag ${REPOSITORY}:moddable-${HASH} ghcr.io/${REPOSITORY}:${LATEST_TAG}
 fi
 
 if [ -z "${IS_LATEST}" ] && [ -z "${WILL_PUSH_IMAGE}" ]; then  # if not defined
@@ -67,24 +74,24 @@ if [ -z "${IS_LATEST}" ]; then  # if latest not defined
 	IS_LATEST="False"
 fi
 if [ "${IS_LATEST}" == "True" ]; then
-	docker tag tiryoh/moddable-esp32:moddable-${HASH} tiryoh/moddable-esp32:latest
+	docker tag ${REPOSITORY}:moddable-${HASH} ${REPOSITORY}:latest
 fi
 
 if [ "${WILL_PUSH_IMAGE}" == "True" ]; then
-	docker push tiryoh/moddable-esp32:moddable-${HASH}
-	docker push ghcr.io/tiryoh/moddable-esp32:moddable-${HASH}
+	docker push ${REPOSITORY}:moddable-${HASH}
+	docker push ghcr.io/${REPOSITORY}:moddable-${HASH}
 	if [ ! -z "${LATEST_TAG}" ] ; then  # if published with git tag
-		docker push tiryoh/moddable-esp32:${LATEST_TAG}
-		docker push ghcr.io/tiryoh/moddable-esp32:${LATEST_TAG}
+		docker push ${REPOSITORY}:${LATEST_TAG}
+		docker push ghcr.io/${REPOSITORY}:${LATEST_TAG}
 	fi
 	if [ "${IS_LATEST}" == "True" ]; then
-		docker push tiryoh/moddable-esp32:latest
+		docker push ${REPOSITORY}:latest
 	fi
 fi
 
 ## remove ghcr.io tags
 
-docker rmi ghcr.io/tiryoh/moddable-esp32:moddable-${HASH}
+docker rmi ghcr.io/${REPOSITORY}:moddable-${HASH}
 if [ ! -z "${LATEST_TAG}" ] ; then  # if published with git tag
-	docker rmi ghcr.io/tiryoh/moddable-esp32:${LATEST_TAG}
+	docker rmi ghcr.io/${REPOSITORY}:${LATEST_TAG}
 fi
