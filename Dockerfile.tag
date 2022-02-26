@@ -1,8 +1,9 @@
-FROM espressif/idf:v4.3.1
+FROM espressif/idf:v4.4
 LABEL maintainer="Shinya Ishikawa <ishikawa.s.1027@gmail.com>"
 
 # Base setup
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+&& DEBIAN_FRONTEND=noninteractive apt-get install -y \
   sudo \
   build-essential \
   git \
@@ -15,10 +16,11 @@ RUN apt-get update && apt-get install -y \
   flex \
   bison \
   gperf \
-  python \
-  python-pip \
+  python3 \
+  python-is-python3 \
+  python3-pip \
+  python3-serial \
   python-setuptools \
-  python-serial \
   cmake \
   ninja-build \
 && apt-get clean \
