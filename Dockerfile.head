@@ -1,4 +1,4 @@
-FROM espressif/idf:v4.4.2
+FROM espressif/idf:v4.4.3
 LABEL maintainer="Shinya Ishikawa <ishikawa.s.1027@gmail.com>"
 
 # Base setup
