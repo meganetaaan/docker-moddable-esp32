@@ -13,10 +13,11 @@ do
 	if [ "${OPT}" == "--push" ]; then WILL_PUSH_IMAGE="True"; fi
 	if [ "${OPT}" == "--cache" ]; then WILL_USE_CACHE="True"; fi
 	if [ "${OPT}" == "--tag" ]; then WILL_BUILD_TAG="True"; fi
+	if [ "${OPT}" == "--release" ]; then WILL_BUILD_RELEASE="True"; fi
 	if [ "${OPT}" == "--head" ]; then WILL_BUILD_HEAD="True"; fi
 done
 
-if [ -z "${WILL_BUILD_HEAD}" ] && [ -z "${WILL_BUILD_TAG}" ]; then  # if not defined
+if [ -z "${WILL_BUILD_HEAD}" ] && [ -z "${WILL_BUILD_TAG}" ] && [ -z "${WILL_BUILD_RELEASE}" ]; then  # if not defined
 	WILL_BUILD_HEAD="True"
 fi
 
@@ -29,6 +30,11 @@ elif [ "${WILL_BUILD_TAG}" == "True" ]; then
 	LATEST_TAG=`curl -SsL https://api.github.com/repos/Moddable-OpenSource/moddable/tags | jq -r '.[0] | .name + " " + .commit.sha'`
 	HASH=`echo ${LATEST_TAG} | sed -E 's/.* (.{7}).*/\1/g'`
 	LATEST_TAG=`echo ${LATEST_TAG} | sed -E 's/(.*) .*/\1/g'`
+	DOCKERFILE="Dockerfile.tag"
+	BUILD_OPTION=" --build-arg GIT_TAG=${LATEST_TAG}"
+elif [ "${WILL_BUILD_RELEASE}" == "True" ]; then
+	LATEST_TAG=`curl -SsL https://api.github.com/repos/Moddable-OpenSource/moddable/releases | jq -r '.[0] | .tag_name'`
+	HASH=`curl -SsL https://api.github.com/repos/Moddable-OpenSource/moddable/git/ref/tags/${LATEST_TAG} | jq -r '.object.sha'`
 	DOCKERFILE="Dockerfile.tag"
 	BUILD_OPTION=" --build-arg GIT_TAG=${LATEST_TAG}"
 fi
