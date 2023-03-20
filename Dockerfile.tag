@@ -38,12 +38,8 @@ RUN git clone --depth=1 -b $GIT_TAG https://github.com/Moddable-OpenSource/modda
 # Build toolchain for Linux
 WORKDIR $MODDABLE/build/makefiles/lin
 ENV PATH=$PATH:$MODDABLE/build/bin/lin/release
-RUN make
-# Avoid updating icon cache for docker environment
-RUN sed -i 's/.*gtk-update-icon-cache/#&/g' \
-  ${MODDABLE}/build/makefiles/lin/simulator.mk \
-  ${MODDABLE}/build/tmp/lin/release/xsbug/makefile
-RUN make install
+RUN make && \
+    make install
 
 # If upload port is not detected automatically, Set UPLOAD_PORT.
 # ENV UPLOAD_PORT=/dev/ttyUSB0
